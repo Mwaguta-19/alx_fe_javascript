@@ -8,6 +8,9 @@ const quotes = [
     const quote = quotes[randomIndex];
     const quoteDisplay = document.getElementById("quoteDisplay");
     quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
+
+
+    sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));
   }
   
   function createAddQuoteForm() {
