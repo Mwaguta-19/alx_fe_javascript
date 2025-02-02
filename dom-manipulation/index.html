@@ -8,7 +8,8 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
   <div id="quoteDisplay"></div>
-  <button id="newQuote">Show New Quote</button>
+  <button id="newQuote" onclick="showRandomQuote()">Show New Quote</button>
+  
   
   <div>
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
@@ -16,6 +17,7 @@
     <button id="addQuoteButton">Add Quote</button>
   </div>
   <button onclick="exportToJson()">Export Quotes</button>
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
   <script src="script.js"></script>
 </body>
