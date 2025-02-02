@@ -33,50 +33,29 @@ const quotes = [
     }
   }
   
+  function showRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const quote = quotes[randomIndex];
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    
+    // Display the quote on the page
+    quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
+    
+    // Save the last viewed quote to sessionStorage
+    sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));  // Save quote to sessionStorage
+  }
 
-  function loadQuotes() {
-    const savedQuotes = localStorage.getItem('quotes');
-    if (savedQuotes) {
-      quotes = JSON.parse(savedQuotes);  // Load the saved quotes into the array
+  function loadLastViewedQuote() {
+    const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
+    if (lastViewedQuote) {
+      const quote = JSON.parse(lastViewedQuote);  // Parse the JSON string back to an object
+      const quoteDisplay = document.getElementById("quoteDisplay");
+      quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
     }
   }
-  function saveQuotes() {
-    localStorage.setItem('quotes', JSON.stringify(quotes));  // Save the quotes array as a JSON string
-  }
 
-  function exportToJson() {
-    const blob = new Blob([JSON.stringify(quotes)], { type: 'application/json' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "quotes.json";
-    link.click();
-  }
-  function importFromJsonFile(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = function(event) {
-      const importedQuotes = JSON.parse(event.target.result);  // Parse the JSON file content
-      quotes.push(...importedQuotes);  // Add the imported quotes to the existing array
-      saveQuotes();  // Save the updated quotes array to localStorage
-      alert('Quotes imported successfully!');
-    };
-    fileReader.readAsText(event.target.files[0]);  // Read the file as text
-  }
-  loadQuotes();
-loadLastViewedQuote();  // Load the last viewed quote when the page is loaded
-showRandomQuote();  // Show a random quote on page load
-createAddQuoteForm();  // Show the form to add new quotes
+  // Load the last viewed quote when the page is loaded
+loadLastViewedQuote();
 
-// Optional: Add a button to export quotes
-const exportButton = document.createElement("button");
-exportButton.textContent = "Export Quotes";
-exportButton.onclick = exportToJson;
-document.body.appendChild(exportButton);
 
-// Optional: Add file input to import quotes
-const importInput = document.createElement("input");
-importInput.type = "file";
-importInput.accept = ".json";
-importInput.onchange = function(event) {
-  importFromJsonFile(event);
-};
-document.body.appendChild(importInput);
+  
