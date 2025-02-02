@@ -33,29 +33,98 @@ const quotes = [
     }
   }
   
-  function showRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const quote = quotes[randomIndex];
-    const quoteDisplay = document.getElementById("quoteDisplay");
-    
-    // Display the quote on the page
-    quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
-    
-    // Save the last viewed quote to sessionStorage
-    sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));  // Save quote to sessionStorage
-  }
 
-  function loadLastViewedQuote() {
-    const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
-    if (lastViewedQuote) {
-      const quote = JSON.parse(lastViewedQuote);  // Parse the JSON string back to an object
-      const quoteDisplay = document.getElementById("quoteDisplay");
-      quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
+  function loadQuotes() {
+    const savedQuotes = localStorage.getItem('quotes');
+    if (savedQuotes) {
+      quotes = JSON.parse(savedQuotes);  // Load the saved quotes into the array
     }
   }
+  function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));  // Save the quotes array as a JSON string
+  }
 
-  // Load the last viewed quote when the page is loaded
-loadLastViewedQuote();
+  // Initialize an empty quotes array
 
 
+// Step 1: Load quotes from localStorage (if available)
+function loadQuotes() {
+  const savedQuotes = localStorage.getItem('quotes');
+  if (savedQuotes) {
+    quotes = JSON.parse(savedQuotes);  // Load the saved quotes into the array
+  }
+}
+
+// Step 2: Save quotes to localStorage
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));  // Save the quotes array as a JSON string
+}
+
+// Step 3: Display a random quote
+function showRandomQuote() {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const quote = quotes[randomIndex];
+  const quoteDisplay = document.getElementById("quoteDisplay");
   
+  // Display the quote on the page
+  quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
+  
+  // Save the last viewed quote to sessionStorage
+  sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));  // Store as a JSON string
+}
+
+// Step 4: Load the last viewed quote from sessionStorage
+function loadLastViewedQuote() {
+  const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
+  if (lastViewedQuote) {
+    const quote = JSON.parse(lastViewedQuote);  // Parse the stored JSON string back to an object
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    quoteDisplay.innerHTML = `<p>${quote.text}</p><p><em>Category: ${quote.category}</em></p>`;
+  }
+}
+
+// Step 5: Add a new quote
+function addQuote() {
+  const text = document.getElementById("newQuoteText").value;
+  const category = document.getElementById("newQuoteCategory").value;
+  if (text && category) {
+    quotes.push({ text, category });
+    saveQuotes();  // Save quotes to localStorage
+    showRandomQuote();  // Show a new random quote
+  }
+}
+
+// Step 6: Export quotes to a JSON file
+function exportToJson() {
+  const blob = new Blob([JSON.stringify(quotes)], { type: 'application/json' });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "quotes.json";
+  link.click();
+}
+
+// Step 7: Import quotes from a JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(event) {
+    const importedQuotes = JSON.parse(event.target.result);  // Parse the JSON file content
+    quotes.push(...importedQuotes);  // Add the imported quotes to the existing array
+    saveQuotes();  // Save the updated quotes array to localStorage
+    alert('Quotes imported successfully!');
+  };
+  fileReader.readAsText(event.target.files[0]);  // Read the file as text
+}
+
+// Initialize the app
+function initializeApp() {
+  loadQuotes();  // Load saved quotes from localStorage
+  loadLastViewedQuote();  // Load the last viewed quote from sessionStorage
+
+  // Optionally show a random quote when the page loads
+  if (quotes.length > 0) {
+    showRandomQuote();
+  }
+}
+
+// Call the initializeApp function when the page loads
+initializeApp();
