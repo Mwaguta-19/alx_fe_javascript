@@ -28,6 +28,7 @@ const quotes = [
     const category = document.getElementById("newQuoteCategory").value;
     if (text && category) {
       quotes.push({ text, category });
+      saveQuotes();
       showRandomQuote();
     }
   }
@@ -60,4 +61,22 @@ const quotes = [
     };
     fileReader.readAsText(event.target.files[0]);  // Read the file as text
   }
-    
+  loadQuotes();
+loadLastViewedQuote();  // Load the last viewed quote when the page is loaded
+showRandomQuote();  // Show a random quote on page load
+createAddQuoteForm();  // Show the form to add new quotes
+
+// Optional: Add a button to export quotes
+const exportButton = document.createElement("button");
+exportButton.textContent = "Export Quotes";
+exportButton.onclick = exportToJson;
+document.body.appendChild(exportButton);
+
+// Optional: Add file input to import quotes
+const importInput = document.createElement("input");
+importInput.type = "file";
+importInput.accept = ".json";
+importInput.onchange = function(event) {
+  importFromJsonFile(event);
+};
+document.body.appendChild(importInput);
