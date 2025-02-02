@@ -44,16 +44,7 @@ const quotes = [
     localStorage.setItem('quotes', JSON.stringify(quotes));  // Save the quotes array as a JSON string
   }
 
-  // Initialize an empty quotes array
-
-
-// Step 1: Load quotes from localStorage (if available)
-function loadQuotes() {
-  const savedQuotes = localStorage.getItem('quotes');
-  if (savedQuotes) {
-    quotes = JSON.parse(savedQuotes);  // Load the saved quotes into the array
-  }
-}
+  
 
 // Step 2: Save quotes to localStorage
 function saveQuotes() {
@@ -115,16 +106,41 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);  // Read the file as text
 }
 
-// Initialize the app
-function initializeApp() {
-  loadQuotes();  // Load saved quotes from localStorage
-  loadLastViewedQuote();  // Load the last viewed quote from sessionStorage
-
-  // Optionally show a random quote when the page loads
-  if (quotes.length > 0) {
-    showRandomQuote();
+/function setupEventListeners() {
+    const newQuoteButton = document.getElementById("newQuote");
+    newQuoteButton.onclick = function() {
+      showRandomQuote();  // Show a random quote when clicked
+    };
+    
+    const addQuoteButton = document.getElementById("addQuote");
+    addQuoteButton.onclick = function() {
+      addQuote();  // Add a new quote when clicked
+    };
+    
+    const importFileInput = document.getElementById("importFile");
+    importFileInput.onchange = function(event) {
+      importFromJsonFile(event);  // Import quotes when a file is selected
+    };
+  
+    const exportButton = document.getElementById("exportButton");
+    exportButton.onclick = function() {
+      exportToJson();  // Export quotes when clicked
+    };
   }
-}
-
-// Call the initializeApp function when the page loads
-initializeApp();
+  
+  // Initialize the app
+  function initializeApp() {
+    loadQuotes();  // Load saved quotes from localStorage
+    loadLastViewedQuote();  // Load the last viewed quote from sessionStorage
+  
+    // Optionally show a random quote when the page loads
+    if (quotes.length > 0) {
+      showRandomQuote();
+    }
+  
+    // Set up the event listeners
+    setupEventListeners();
+  }
+  
+  // Call the initializeApp function when the page loads
+  initializeApp();
