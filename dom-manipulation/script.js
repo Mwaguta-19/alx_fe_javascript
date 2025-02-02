@@ -29,3 +29,32 @@ const quotes = [
     }
   }
   
+
+  function loadQuotes() {
+    const savedQuotes = localStorage.getItem('quotes');
+    if (savedQuotes) {
+      quotes = JSON.parse(savedQuotes);  // Load the saved quotes into the array
+    }
+  }
+  function saveQuotes() {
+    localStorage.setItem('quotes', JSON.stringify(quotes));  // Save the quotes array as a JSON string
+  }
+
+  function exportToJson() {
+    const blob = new Blob([JSON.stringify(quotes)], { type: 'application/json' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "quotes.json";
+    link.click();
+  }
+  function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      const importedQuotes = JSON.parse(event.target.result);  // Parse the JSON file content
+      quotes.push(...importedQuotes);  // Add the imported quotes to the existing array
+      saveQuotes();  // Save the updated quotes array to localStorage
+      alert('Quotes imported successfully!');
+    };
+    fileReader.readAsText(event.target.files[0]);  // Read the file as text
+  }
+    
