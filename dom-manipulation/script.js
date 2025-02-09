@@ -15,7 +15,7 @@ let selectedCategory = localStorage.getItem('selectedCategory') || 'all';
 
 
 // Function to simulate fetching data from the server
-async function fetchQuotesFromServer() {
+async function syncQuotes() {
   try {
       const response = await fetch(serverUrl);
       const serverQuotes = await response.json();
