@@ -13,8 +13,9 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
 let selectedCategory = localStorage.getItem('selectedCategory') || 'all';
 
 
+
 // Function to simulate fetching data from the server
-async function fetchFromServer() {
+async function fetchQuotesFromServer() {
   try {
       const response = await fetch(serverUrl);
       const serverQuotes = await response.json();
