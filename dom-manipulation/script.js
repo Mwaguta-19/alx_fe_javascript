@@ -12,9 +12,6 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
 
 let selectedCategory = localStorage.getItem('selectedCategory') || 'all';
 
-// Fetch quotes from a mock server (JSONPlaceholder)
-const serverUrl = "https://jsonplaceholder.typicode.com/posts";
-
 
 // Function to simulate fetching data from the server
 async function fetchFromServer() {
@@ -61,10 +58,6 @@ function saveQuotes() {
   populateCategories();
   filterQuotes();
 }
-
-fetchFromServer();
-// Sync with the server every 5 minutes (300,000 ms)
-setInterval(fetchFromServer, 3000); // Fetch data every 5 minutes
 
 // Function to add a new quote
 function addQuote() {
@@ -123,7 +116,7 @@ function createAddQuoteForm() {
   //document.body.appendChild(formContainer);
 
   // Add an event listener for the Add Quote button
- // addButton.addEventListener('click', addQuote);
+ addButton.addEventListener('click', addQuote);
 }
 
 // Function to save quotes to localStorage
@@ -167,27 +160,8 @@ function filterQuotes() {
   document.getElementById("quoteDisplay").textContent = `"${quote.text}" - ${quote.category}`;
 }
 
+
 function exportToJson() {
-  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: 'application/json' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'quotes.json';
-  link.click();
-}
-
-function importFromJsonFile(event) {
-  const fileReader = new FileReader();
-  fileReader.onload = function(event) {
-      const importedQuotes = JSON.parse(event.target.result);
-      quotes.push(...importedQuotes);
-      saveQuotes();
-      alert('Quotes imported successfully!');
-  };
-  fileReader.readAsText(event.target.files[0]);
-}
-
-
-  /*function exportToJson() {
     const dataStr = JSON.stringify(quotes, null, 2);  // Convert the quotes array to a JSON string
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -220,4 +194,21 @@ createAddQuoteForm();  // Create and add the form for adding new quotes when the
 populateCategories();  // Populate categories on page load
 filterQuotes();  // Apply the initial filter based on the saved category 
 
-fetchFromServer();*/
+const serverUrl = "https://jsonplaceholder.typicode.com/posts"; // Use an API mock service
+
+// Simulate fetching data from the server
+function fetchServerData() {
+    fetch(serverUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Merge server data with local data (simple conflict resolution)
+            const mergedData = [...data, ...quotes];
+            quotes = mergedData;
+            saveQuotes(); // Save merged data to local storage
+            alert('Data synced with the server!');
+        })
+        .catch(error => console.error("Error syncing data:", error));
+}
+
+// Periodically check for new server data
+setInterval(fetchServerData, 5000); // Sync every 5 seconds
