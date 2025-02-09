@@ -62,9 +62,9 @@ function saveQuotes() {
   filterQuotes();
 }
 
-
+fetchFromServer();
 // Sync with the server every 5 minutes (300,000 ms)
-setInterval(fetchFromServer, 300000); // Fetch data every 5 minutes
+setInterval(fetchFromServer, 3000); // Fetch data every 5 minutes
 
 // Function to add a new quote
 function addQuote() {
@@ -92,7 +92,7 @@ function showRandomQuote() {
 
 
 // Attach event listener to the 'Show New Quote' button
-//document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 // Function to create the Add Quote Form dynamically
 function createAddQuoteForm() {
@@ -151,7 +151,6 @@ function populateCategories() {
 }
 
 
-fetchFromServer();
 
 // Function to filter quotes based on the selected category
 function filterQuotes() {
