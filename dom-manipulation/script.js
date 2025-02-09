@@ -211,5 +211,6 @@ function fetchServerData() {
         .catch(error => console.error("Error syncing data:", error));
 }
 
+fetchQuotesFromServer();
 // Periodically check for new server data
-setInterval(fetchServerData, 5000); // Sync every 5 seconds
+setInterval(fetchQuotesFromServer, 5000); // Sync every 5 seconds
