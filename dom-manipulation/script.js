@@ -66,12 +66,47 @@ function addQuote() {
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
 
   // Validate the inputs
-  if (newQuoteText && newQuoteCategory ) {
-    const newQuote = { text: newQuoteText, category: newQuoteCategory };
-    quotes.push(newQuote);  // Add the new quote to the array
-    saveQuotes(); // Save the updated quotes to localStorage
-    populateCategories();  // Update the categories dropdown
-    filterQuotes();  // Reapply the filter based on the last selected category
+  if (!newQuoteText || newQuoteCategory ) {
+
+    alert ("Please provide both a quote and a category.");
+    return;
+    
+  }
+
+  const newQuote = { text: newQuoteText, category: newQuoteCategory };
+  quotes.push(newQuote);  // Add the new quote to the array
+  saveQuotes(); 
+  postQuoteToServer(newQuote);// Save the updated quotes to localStorage
+  populateCategories();  // Update the categories dropdown
+  filterQuotes();  // Reapply the filter based on the last selected category
+}
+
+// Function to send the new quote to the server
+async function postQuoteToServer(newQuote) {
+  try {
+      const response = await fetch(serverUrl, {
+          method: 'POST', // Method to send data
+          headers: {
+              'Content-Type': 'application/json' // Ensure the data is sent in JSON format
+          },
+          body: JSON.stringify({
+              title: newQuote.text,  // Use 'title' to simulate a post title
+              body: newQuote.category, // Use 'body' for the category
+              userId: 1  // JSONPlaceholder mock API expects a userId (this can be replaced with any other field)
+          })
+      });
+
+      if (response.ok) {
+          const result = await response.json();
+          console.log("Quote posted to server:", result);
+          document.getElementById("syncStatus").innerText = "Quote successfully posted to the server!";
+      } else {
+          console.error("Failed to post the quote:", response.status);
+          document.getElementById("syncStatus").innerText = "Failed to post quote to the server.";
+      }
+  } catch (error) {
+      console.error("Error posting quote:", error);
+      document.getElementById("syncStatus").innerText = "Error posting quote to the server.";
   }
 }
 
