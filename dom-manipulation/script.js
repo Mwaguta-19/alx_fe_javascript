@@ -12,6 +12,52 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
 
 let selectedCategory = localStorage.getItem('selectedCategory') || 'all';
 
+// Fetch quotes from a mock server (JSONPlaceholder)
+const serverUrl = "https://jsonplaceholder.typicode.com/posts";
+
+
+// Function to simulate fetching data from the server
+async function fetchFromServer() {
+  try {
+      const response = await fetch(serverUrl);
+      const serverQuotes = await response.json();
+      
+      // Simulate server quotes as simple text (this would typically be more structured)
+      const formattedServerQuotes = serverQuotes.slice(0, 5).map(post => ({
+          text: post.title, // Use the title as the quote
+          category: "Server" // Dummy category for the server's data
+      }));
+
+      handleSync(formattedServerQuotes);
+  } catch (error) {
+      console.error('Error fetching from server:', error);
+      document.getElementById("syncStatus").innerText = "Failed to sync with the server.";
+  }
+}
+
+
+function handleSync(serverQuotes) {
+  const localQuoteIds = new Set(quotes.map(quote => quote.text));
+
+  let conflictFound = false;
+  serverQuotes.forEach(serverQuote => {
+      if (!localQuoteIds.has(serverQuote.text)) {
+          quotes.push(serverQuote); // Add new quotes from the server
+          conflictFound = true;
+      }
+  });
+  saveQuotes();
+
+
+  if (conflictFound) {
+    document.getElementById("syncStatus").innerText = "Sync completed with new updates from the server.";
+  } else {
+    document.getElementById("syncStatus").innerText = "No new updates from the server.";
+  }
+}
+
+
+
 // Function to show a random quote
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
@@ -76,7 +122,14 @@ function addQuote() {
 // Function to save quotes to localStorage
 function saveQuotes() {
   localStorage.setItem('quotes', JSON.stringify(quotes));
+  populateCategories();
+  filterQuotes();
 }
+
+
+// Sync with the server every 5 minutes (300,000 ms)
+setInterval(fetchFromServer, 300000); // Fetch data every 5 minutes
+
 
 // Function to populate categories dynamically in the dropdown
 function populateCategories() {
@@ -116,7 +169,7 @@ function filterQuotes() {
 
 
 
-  function exportToJson() {
+  /*function exportToJson() {
     const dataStr = JSON.stringify(quotes, null, 2);  // Convert the quotes array to a JSON string
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -147,4 +200,6 @@ function importFromJsonFile(event) {
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 createAddQuoteForm();  // Create and add the form for adding new quotes when the page loads
 populateCategories();  // Populate categories on page load
-filterQuotes();  // Apply the initial filter based on the saved category
+filterQuotes();  // Apply the initial filter based on the saved category */
+
+fetchFromServer();
