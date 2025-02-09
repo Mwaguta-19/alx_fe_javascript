@@ -56,7 +56,30 @@ function handleSync(serverQuotes) {
   }
 }
 
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+  populateCategories();
+  filterQuotes();
+}
 
+
+// Sync with the server every 5 minutes (300,000 ms)
+setInterval(fetchFromServer, 300000); // Fetch data every 5 minutes
+
+// Function to add a new quote
+function addQuote() {
+  const newQuoteText = document.getElementById('newQuoteText').value;
+  const newQuoteCategory = document.getElementById('newQuoteCategory').value;
+
+  // Validate the inputs
+  if (newQuoteText && newQuoteCategory ) {
+    const newQuote = { text: newQuoteText, category: newQuoteCategory };
+    quotes.push(newQuote);  // Add the new quote to the array
+    saveQuotes(); // Save the updated quotes to localStorage
+    populateCategories();  // Update the categories dropdown
+    filterQuotes();  // Reapply the filter based on the last selected category
+  }
+}
 
 // Function to show a random quote
 function showRandomQuote() {
@@ -67,7 +90,6 @@ function showRandomQuote() {
   quoteDisplay.innerHTML = `<p>"${randomQuote.text}"</p><p><strong>- ${randomQuote.category}</strong></p>`;
 }
 
-// Call this function to show a random quote on page load
 
 // Attach event listener to the 'Show New Quote' button
 //document.getElementById('newQuote').addEventListener('click', showRandomQuote);
@@ -104,31 +126,8 @@ function createAddQuoteForm() {
  // addButton.addEventListener('click', addQuote);
 }
 
-// Function to add a new quote
-function addQuote() {
-  const newQuoteText = document.getElementById('newQuoteText').value;
-  const newQuoteCategory = document.getElementById('newQuoteCategory').value;
-
-  // Validate the inputs
-  if (newQuoteText && newQuoteCategory ) {
-    const newQuote = { text: newQuoteText, category: newQuoteCategory };
-    quotes.push(newQuote);  // Add the new quote to the array
-    saveQuotes(); // Save the updated quotes to localStorage
-    populateCategories();  // Update the categories dropdown
-    filterQuotes();  // Reapply the filter based on the last selected category
-  }
-}
-
 // Function to save quotes to localStorage
-function saveQuotes() {
-  localStorage.setItem('quotes', JSON.stringify(quotes));
-  populateCategories();
-  filterQuotes();
-}
 
-
-// Sync with the server every 5 minutes (300,000 ms)
-setInterval(fetchFromServer, 300000); // Fetch data every 5 minutes
 
 
 // Function to populate categories dynamically in the dropdown
@@ -151,6 +150,9 @@ function populateCategories() {
   categoryFilter.value = selectedCategory;
 }
 
+
+fetchFromServer();
+
 // Function to filter quotes based on the selected category
 function filterQuotes() {
   selectedCategory = document.getElementById("categoryFilter").value;
@@ -166,7 +168,24 @@ function filterQuotes() {
   document.getElementById("quoteDisplay").textContent = `"${quote.text}" - ${quote.category}`;
 }
 
+function exportToJson() {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'quotes.json';
+  link.click();
+}
 
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(event) {
+      const importedQuotes = JSON.parse(event.target.result);
+      quotes.push(...importedQuotes);
+      saveQuotes();
+      alert('Quotes imported successfully!');
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
 
 
   /*function exportToJson() {
@@ -200,6 +219,6 @@ function importFromJsonFile(event) {
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 createAddQuoteForm();  // Create and add the form for adding new quotes when the page loads
 populateCategories();  // Populate categories on page load
-filterQuotes();  // Apply the initial filter based on the saved category */
+filterQuotes();  // Apply the initial filter based on the saved category 
 
-fetchFromServer();
+fetchFromServer();*/
